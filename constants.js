@@ -8,5 +8,13 @@ CONSTANTS = {
   	[3,4,4,5,5],
   	[3,4,4,5,5],
   	[3,4,4,5,5]
-  ]
+  ],
+  botNameRegex: /.*\(Bot\)/
+}
+GamePhase = {
+  LOBBY: 'lobby',
+  PROPOSITION: 'propose',
+  VOTE: 'vote',
+  MISSION: 'mission',
+  END: 'end'
 }

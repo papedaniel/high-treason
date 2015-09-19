@@ -1,7 +1,23 @@
 <template name="board">
 	{{#if route}}
 	<div class="container">
-		<p> You are currently in {{game.username}}'s game</p>
+		<p> You are currently in the {{game.currentPhase}} phase of {{game.username}}'s game</p>
+		<div> Your team: <b>{{getTeam}}</b></div>
+		<div> Your role: <b>{{getRole}}</b></div>
+		<div>
+			You know:
+			{{#each getKnownPlayers}}
+			<b>{{name}}</b>
+			{{/each}}
+		</div>
+		<div>
+			<i>{{getRoleDesc}}</i>
+		</div>
+		<div id="playerDiv">
+			{{#each game.players}}
+				{{> player}}
+			{{/each}}
+		</div>
 		<div id="missionDiv">
 			{{#each game.missionLayout}}
 			<p>Mission Size: {{this}}</p>
@@ -10,6 +26,12 @@
 		<div id="teamDiv">
 			Current Team: {{game.currentTeam}}
 		</div>
+		<div>
+			{{#if votingPhase}}
+				<button class="approve">Approve</button>
+				<button class="reject">Reject</button>
+			{{/if}}
+		</div>
 		{{#if currentlyLeader}}
 		<div id="teamSelector">
 			<p>Choose {{currentMissionSize}}</p>
@@ -17,8 +39,8 @@
 				{{#each game.players}}
 				<div>
 					<label>
-						{{this}}
-						<input type="checkbox" name="team" value="{{this}}">
+						{{name}}
+						<input type="checkbox" name="team" value="{{this.name}}">
 					</label>
 				</div>
 				{{/each}}
@@ -26,6 +48,17 @@
 			</form>
 		</div>
 		{{/if}}
+		<!--<button class="reassignRoles">Reassign Roles (TEST)</button>-->
+		<button class="closeGame">Close Game (TEST)</button>
 	</div>
 	{{/if}}
+</template>
+
+<template name="player">
+	<div class="player">
+		<span>{{this.name}}</span>
+		{{#if nonVotingPhase}}
+			<span>Last Vote: {{lastVote}}</span>
+		{{/if}}
+	</div>
 </template>

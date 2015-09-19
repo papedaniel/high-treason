@@ -1,7 +1,16 @@
-Games = new Mongo.Collection("games");
-Roles = new Mongo.Collection("roles");
 
 if (Meteor.isClient) {
+  checkGameState = function() {
+    var game = Game.get();
+    if (!game) {
+      Session.set('currentPage', 'games');
+    } else {
+      var gameId = game._id;
+      Session.set('currentPage', game.currentPhase === GamePhase.LOBBY ? 'lobby' : 'board');
+      Session.set('currentGame', gameId);
+    }
+  }
+
   // This code only runs on the client
   Meteor.subscribe("games");
   Meteor.subscribe("roles");
@@ -57,28 +66,12 @@ if (Meteor.isClient) {
     Session.set('currentPage', 'games');
   });
 
-  checkGameState = function() {
-    var gameId = Session.get("currentGame");
-    if (!gameId) {
-      var game = Games.findOne({
-        players: Meteor.user().username
-      });
-      if (game)
-        gameId = game._id;
-    }
-    if (!gameId) {
-      Session.set('currentPage', 'games');
-    } else {
-      Session.set('currentPage', 'lobby');
-      Session.set('currentGame', gameId);
-    }
-  }
 }
 
 if (Meteor.isServer) {
 
   Accounts.validateNewUser(function(user) {
-    if (user.username && /.*\(Bot\)/.test(user.username))
+    if (user.username && CONSTANTS.botNameRegex.test(user.username))
       throw new Meteor.Error(403, "That user already exists.");
     if (user.username && user.username.length >= 3)
       return true;
